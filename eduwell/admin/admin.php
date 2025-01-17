@@ -10,7 +10,14 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 
-include_once('../casti_stranky/header.php');
+
+require_once "../classes/AdminKurzov.php";
+use Admin\AdminKurzov;
+
+// Pripojenie k databáze
+$admin = new AdminKurzov(); 
+
+$studenti = $admin->getAllStudents();
 ?>
 
 <!DOCTYPE html>
@@ -34,9 +41,48 @@ include_once('../casti_stranky/header.php');
     <link rel="stylesheet" href="/eduwell/assets/css/lightbox.css">
 </head>
 <body>
+<?php include_once('../casti_stranky/header.php');  ?>
+
 <section>
     <h2>Vitaj, admin!</h2>
     <a href="logout.php">Odhlásiť sa</a>
+
+    <h2>Zoznam prihlásených na kurzy</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Názov kurzu</th>
+            <th>Dátum kurzu</th>
+            <th>Meno</th>
+            <th>Priezvisko</th>
+            <th>Pohlavie</th>
+            <th>Vek</th>
+            <th>Mesto bydliska</th>
+            <th>Stav absolvovania</th>
+            <th>Akcie</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($studenti as $student): ?>
+            <tr>
+                <td><?= htmlspecialchars($student['nazov_kurzu']) ?></td>
+                <td><?= htmlspecialchars($student['datum_kurzu']) ?></td>
+                <td><?= htmlspecialchars($student['meno']) ?></td>
+                <td><?= htmlspecialchars($student['priezvisko']) ?></td>
+                <td><?= htmlspecialchars($student['pohlavie']) ?></td>
+                <td><?= htmlspecialchars($student['vek']) ?></td>
+                <td><?= htmlspecialchars($student['mesto_bydliska']) ?></td>
+                <td><?= htmlspecialchars($student['stav_absolvovania']) ?></td>
+                <td>
+                    <a href="update.php?id=<?= $student['id'] ?>">Upraviť</a> | 
+                    <a href="delete.php?id=<?= $student['id'] ?>" onclick="return confirm('Naozaj chcete vymazať tohto študenta?')">Vymazať</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<a href="insert.php">Pridať nového študenta</a>
 </section>
 <!-- Scripts -->
   <!-- Bootstrap core JavaScript -->
@@ -99,4 +145,5 @@ include_once('../casti_stranky/header.php');
 
 </body>
 </html>
+
 
